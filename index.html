@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DecidIA — Toma mejores decisiones con IA. Consulta el oráculo o analiza tu caso con inteligencia artificial." />
+  <title>DecidIA — Tu asistente de decisiones</title>
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/home.css" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🔮</text></svg>" />
+</head>
+<body>
+
+<!-- Partículas -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ══ NAVBAR ══════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="navbar__logo">
+      <span class="logo-decid">Decid</span><span class="logo-accent">IA</span>
+    </a>
+
+    <ul class="navbar__nav">
+      <li><a href="#" class="navbar__link active">Inicio</a></li>
+      <li><a href="#como-funciona" class="navbar__link">Cómo funciona</a></li>
+      <li><a href="#planes" class="navbar__link">Planes</a></li>
+      <li><a href="#" class="navbar__link">Sobre DecidIA</a></li>
+      <li><a href="#" class="navbar__link">Blog</a></li>
+    </ul>
+
+    <div class="navbar__actions">
+      <button class="btn btn--ghost btn--sm" onclick="openModal('modal-login')">Iniciar sesión</button>
+      <button class="btn btn--primary btn--sm" onclick="openModal('modal-register')">Crear cuenta</button>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button class="navbar__hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div class="navbar__drawer" id="nav-drawer">
+  <a href="#" class="navbar__link active">Inicio</a>
+  <a href="#como-funciona" class="navbar__link">Cómo funciona</a>
+  <a href="#planes" class="navbar__link">Planes</a>
+  <a href="#" class="navbar__link">Sobre DecidIA</a>
+  <a href="#" class="navbar__link">Blog</a>
+  <div class="navbar__actions">
+    <button class="btn btn--ghost" onclick="closeDrawer();openModal('modal-login')">Iniciar sesión</button>
+    <button class="btn btn--primary" onclick="closeDrawer();openModal('modal-register')">Crear cuenta</button>
+  </div>
+</div>
+
+<!-- ══ HERO ════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <!-- Background glows -->
+  <div class="hero__bg-glow hero__bg-glow--1"></div>
+  <div class="hero__bg-glow hero__bg-glow--2"></div>
+  <div class="hero__bg-glow hero__bg-glow--3"></div>
+
+  <div class="container">
+
+    <!-- Question bar -->
+    <div class="hero__question-bar">
+      <div class="question-bar__label">Escribe tu pregunta</div>
+      <div class="question-bar__row" style="position:relative">
+        <input
+          type="text"
+          class="question-bar__input"
+          id="oracle-question"
+          maxlength="300"
+          autocomplete="off"
+        />
+        <button class="question-bar__examples-btn" id="examples-btn">
+          ✨ Ejemplos
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="examples-dropdown" id="examples-dropdown"></div>
+      </div>
+    </div>
+
+    <!-- Main 3-column layout -->
+    <div class="hero__main">
+
+      <!-- LEFT: Headline -->
+      <div class="hero__left">
+        <div>
+          <h1 class="hero__title">
+            Tú preguntas,<br/>
+            la suerte responde.<br/>
+            <span class="highlight">La IA te guía.</span>
+          </h1>
+        </div>
+        <p class="hero__subtitle">
+          Haz una pregunta rápida y obtén una respuesta al azar.
+          ¿Quieres ir más allá? Deja que nuestra IA analice tu caso
+          según tu perfil, emociones e historial.
+        </p>
+        <div class="hero__badges">
+          <span class="hero__badge-item hero__badge-item--free">✨ Gratis</span>
+          <span class="hero__badge-item hero__badge-item--fast">• Rápido</span>
+          <span class="hero__badge-item hero__badge-item--fun">• Divertido</span>
+          <span class="hero__badge-item hero__badge-item--smart">• Inteligente</span>
+        </div>
+      </div>
+
+      <!-- CENTER: Slot Machine -->
+      <div class="hero__center">
+        <div class="slot-machine">
+
+          <!-- Side arrows left -->
+          <div class="slot-machine__arrows slot-machine__arrows--left">
+            <svg class="slot-arrow slot-arrow--up" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 8H4l8-8z"/></svg>
+            <svg class="slot-arrow slot-arrow--down" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 8H4l8-8z"/></svg>
+          </div>
+
+          <div class="slot-machine__chassis">
+            <div class="slot-drum__window" id="drum-window">
+              <div class="slot-drum__fade-top"></div>
+              <div class="slot-drum__fade-bottom"></div>
+              <div class="slot-drum__highlight" id="drum-highlight"></div>
+              <div class="slot-drum__column" id="drum-column">
+                <div class="slot-drum__item is-center" style="color:rgba(255,255,255,0.25);font-size:2rem">🔮</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side arrows right -->
+          <div class="slot-machine__arrows slot-machine__arrows--right">
+            <svg class="slot-arrow slot-arrow--up" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 8H4l8-8z"/></svg>
+            <svg class="slot-arrow slot-arrow--down" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 8H4l8-8z"/></svg>
+          </div>
+        </div>
+
+        <!-- Random label -->
+        <div class="slot-machine__rand-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          Respuesta 100% al azar
+        </div>
+
+        <!-- GIRAR button -->
+        <div class="btn-girar-wrap">
+          <div class="btn-girar-arrow">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 4l8 8-8 8z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 4l8 8-8 8z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 4l8 8-8 8z"/></svg>
+          </div>
+
+          <button class="btn--girar" id="btn-girar">
+            ¡GIRAR!
+            <span class="girar-subtitle">Obtener respuesta<br>al azar</span>
+          </button>
+
+          <div class="btn-girar-arrow btn-girar-arrow--right">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 4l8 8-8 8z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 4l8 8-8 8z"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 4l8 8-8 8z"/></svg>
+          </div>
+        </div>
+
+        <!-- Post-result panel -->
+        <div class="oracle-post-result" id="post-result">
+          <p class="oracle-post-result__label">¿Quieres una recomendación basada en IA?</p>
+          <div class="oracle-post-result__actions">
+            <button class="btn btn--primary btn--lg" onclick="openModal('modal-register')">
+              🤖 Analizar mi caso
+            </button>
+            <button class="btn btn--ghost" id="btn-again">🔄 Preguntar de nuevo</button>
+          </div>
+          <div class="oracle-post-result__feedback">
+            <span class="oracle-post-result__feedback-label">¿Fue útil?</span>
+            <div style="display:flex;gap:8px">
+              <button class="feedback-btn" data-value="1" title="Sí">👍</button>
+              <button class="feedback-btn" data-value="-1" title="No">👎</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: AI Panel -->
+      <div class="hero__right">
+        <div class="ai-panel" style="position:relative">
+          <div class="ai-panel__robot">
+            <span class="ai-panel__robot-icon">🤖</span>
+          </div>
+          <h3 class="ai-panel__title">¿Quieres una respuesta<br/>más profunda y personalizada?</h3>
+          <p class="ai-panel__subtitle">
+            Nuestra IA analiza tu perfil, emociones e historial para darte la mejor orientación.
+          </p>
+          <div class="ai-panel__features">
+            <div class="ai-feature">
+              <span class="ai-feature__icon">👤</span>
+              <span>Análisis basado en tu perfil</span>
+            </div>
+            <div class="ai-feature">
+              <span class="ai-feature__icon">🧠</span>
+              <span>Recomendaciones inteligentes</span>
+            </div>
+            <div class="ai-feature">
+              <span class="ai-feature__icon">👁️</span>
+              <span>Mayor claridad en tus decisiones</span>
+            </div>
+          </div>
+          <button class="btn btn--primary" onclick="openModal('modal-register')">
+            Analizar con IA ✨
+          </button>
+          <div class="ai-panel__lock">
+            🔒 Requiere registro
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.hero__main -->
+
+    <!-- Stats bar -->
+    <div class="hero__stats">
+      <div class="hero__stats-inner">
+        <div class="stat-group">
+          <div class="stat-avatars">
+            <div class="stat-avatar">😊</div>
+            <div class="stat-avatar">🙂</div>
+            <div class="stat-avatar">😄</div>
+            <div class="stat-avatar stat-avatar--count">+10k</div>
+          </div>
+          <span class="stat-text">Únete a miles de personas<br>que ya están decidiendo mejor.</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-item__value text-teal">⚡ +250K</span>
+          <span class="stat-item__label">Decisiones realizadas</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-item__value text-violet">😊 85%</span>
+          <span class="stat-item__label">Usuarios satisfechos</span>
+        </div>
+
+        <div class="stat-item">
+          <span class="stat-item__value text-gold">⭐ 4.8/5</span>
+          <span class="stat-item__label">Calificación promedio</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.container -->
+</section>
+
+
+<!-- ══ CÓMO FUNCIONA ═══════════════════════════════════════ -->
+<section class="section section--how" id="como-funciona">
+  <div class="container container--md">
+    <div class="section__header">
+      <span class="badge badge--teal">El proceso</span>
+      <h2 class="section__title">Así funciona DecidIA</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-card__number">01</div>
+        <div class="step-card__icon">✍️</div>
+        <h3 class="step-card__title">Escribe tu pregunta</h3>
+        <p class="step-card__desc">Sin límites. Desde decisiones cotidianas hasta las más importantes de tu vida.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-card__number">02</div>
+        <div class="step-card__icon">🎰</div>
+        <h3 class="step-card__title">El oráculo decide</h3>
+        <p class="step-card__desc">Una respuesta inmediata con nuestra mecánica de azar gamificada tipo casino.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-card__number">03</div>
+        <div class="step-card__icon">🤖</div>
+        <h3 class="step-card__title">IA profundiza</h3>
+        <p class="step-card__desc">Con tu perfil psicológico y historial, la IA te da recomendaciones reales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ PLANES ══════════════════════════════════════════════ -->
+<section class="section section--pricing" id="planes">
+  <div class="container container--md">
+    <div class="section__header">
+      <span class="badge badge--violet">Planes</span>
+      <h2 class="section__title">Empieza gratis, escala cuando quieras</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-card__header">
+          <span class="pricing-card__plan">Gratis</span>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount">$0</span>
+            <span class="pricing-card__period">/ siempre</span>
+          </div>
+        </div>
+        <ul class="pricing-card__features">
+          <li>✅ Oráculo ilimitado</li>
+          <li>✅ Historial de 10 consultas</li>
+          <li>✅ Gamificación básica</li>
+          <li class="disabled">❌ Análisis con IA</li>
+          <li class="disabled">❌ Perfil psicológico</li>
+          <li class="disabled">❌ Estadísticas avanzadas</li>
+        </ul>
+        <button class="btn btn--outline-teal" onclick="openModal('modal-register')">Comenzar gratis</button>
+      </div>
+      <div class="pricing-card pricing-card--featured">
+        <div class="pricing-card__badge">⚡ Más popular</div>
+        <div class="pricing-card__header">
+          <span class="pricing-card__plan">Inteligente</span>
+          <div class="pricing-card__price">
+            <span class="pricing-card__amount">$9</span>
+            <span class="pricing-card__period">/ mes</span>
+          </div>
+        </div>
+        <ul class="pricing-card__features">
+          <li>✅ Todo lo del plan Gratis</li>
+          <li>✅ Análisis IA ilimitado</li>
+          <li>✅ Perfil psicológico completo</li>
+          <li>✅ Historial ilimitado</li>
+          <li>✅ Estadísticas y patrones</li>
+          <li>✅ Consejero IA personalizado</li>
+        </ul>
+        <button class="btn btn--primary" onclick="openModal('modal-register')">Empezar con IA</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ FOOTER ══════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <span class="navbar__logo">
+        <span class="logo-decid">Decid</span><span class="logo-accent">IA</span>
+      </span>
+      <p class="footer__tagline">Tu asistente de decisiones.</p>
+    </div>
+    <div class="footer__links">
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+      <a href="#">Contacto</a>
+    </div>
+    <p class="footer__copy">© 2025 DecidIA. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+
+<!-- ══ MODALS ══════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-login">
+  <div class="modal">
+    <button class="modal__close" onclick="closeModal('modal-login')" aria-label="Cerrar">✕</button>
+    <div class="modal__header">
+      <h2 class="modal__title">Bienvenido de vuelta</h2>
+      <p class="modal__subtitle">Inicia sesión en tu cuenta DecidIA</p>
+    </div>
+    <div class="auth-social">
+      <button class="btn btn--ghost auth-social__btn">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </button>
+    </div>
+    <div class="auth-divider"><span>o con correo</span></div>
+    <div class="auth-form">
+      <input type="email" class="input" placeholder="tu@correo.com" autocomplete="email" />
+      <input type="password" class="input" placeholder="Contraseña" autocomplete="current-password" />
+      <button class="btn btn--primary" style="width:100%">Iniciar sesión</button>
+    </div>
+    <p class="auth-footer-text">¿No tienes cuenta? <a href="#" onclick="switchModal('modal-login','modal-register')">Regístrate</a></p>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-register">
+  <div class="modal">
+    <button class="modal__close" onclick="closeModal('modal-register')" aria-label="Cerrar">✕</button>
+    <div class="modal__header">
+      <h2 class="modal__title">Crea tu cuenta</h2>
+      <p class="modal__subtitle">Únete a DecidIA y toma mejores decisiones</p>
+    </div>
+    <div class="auth-social">
+      <button class="btn btn--ghost auth-social__btn">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Registrarse con Google
+      </button>
+    </div>
+    <div class="auth-divider"><span>o con correo</span></div>
+    <div class="auth-form">
+      <input type="text"  class="input" placeholder="Tu nombre" autocomplete="name" />
+      <input type="email" class="input" placeholder="tu@correo.com" autocomplete="email" />
+      <input type="password" class="input" placeholder="Crea una contraseña" autocomplete="new-password" />
+      <button class="btn btn--primary" style="width:100%">Crear cuenta gratis</button>
+    </div>
+    <p class="auth-footer-text">¿Ya tienes cuenta? <a href="#" onclick="switchModal('modal-register','modal-login')">Inicia sesión</a></p>
+  </div>
+</div>
+
+
+<!-- Scripts -->
+<script src="js/models.js"></script>
+<script src="js/oracle.js"></script>
+<script src="js/home.js"></script>
+<script>
+  // Helper for mobile drawer close
+  function closeDrawer() {
+    const d = document.getElementById('nav-drawer');
+    const h = document.getElementById('hamburger');
+    if (d) d.classList.remove('is-open');
+    if (h) h.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+</script>
+</body>
+</html>

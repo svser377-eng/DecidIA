@@ -1,0 +1,92 @@
+/* ============================================================
+   DecidIA — Design Tokens (Casino Edition)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --color-bg:           #06061A;
+  --color-bg-surface:   #0D0D2B;
+  --color-bg-elevated:  #14143A;
+  --color-bg-card:      #111130;
+  --color-violet:       #7C3AFF;
+  --color-violet-dim:   #5520CC;
+  --color-violet-glow:  rgba(124, 58, 255, 0.4);
+  --color-teal:         #00E5DC;
+  --color-teal-dim:     #00AAA3;
+  --color-teal-glow:    rgba(0, 229, 220, 0.3);
+  --color-gold:         #FFB547;
+  --color-gold-glow:    rgba(255, 181, 71, 0.35);
+  --color-red:          #FF3D5A;
+  --color-red-glow:     rgba(255, 61, 90, 0.35);
+  --color-white:        #F0F0FF;
+  --color-white-muted:  #9898C8;
+  --color-white-faint:  #1E1E50;
+  --color-success:      #22D47B;
+  --color-warning:      #FFB547;
+  --color-danger:       #FF5C7A;
+
+  --grad-primary:    linear-gradient(135deg, #7C3AFF 0%, #00E5DC 100%);
+  --grad-gold:       linear-gradient(135deg, #FF8C00 0%, #FFB547 50%, #FFD700 100%);
+  --grad-red:        linear-gradient(135deg, #CC0020 0%, #FF3D5A 100%);
+  --grad-slot:       linear-gradient(180deg, #0A0A2A 0%, #141450 50%, #0A0A2A 100%);
+  --grad-surface:    linear-gradient(180deg, #0D0D2B 0%, #06061A 100%);
+  --grad-glow:       radial-gradient(ellipse at center, rgba(124,58,255,0.5) 0%, transparent 70%);
+  --grad-btn-girar:  linear-gradient(135deg, #AA0020 0%, #FF3D5A 50%, #FF6B80 100%);
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.375rem;
+  --text-2xl:  1.75rem;
+  --text-3xl:  2.25rem;
+  --text-4xl:  3rem;
+  --text-5xl:  4rem;
+
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  --radius-sm:   6px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-xl:   32px;
+  --radius-full: 9999px;
+
+  --shadow-sm:      0 2px 8px rgba(0,0,0,0.5);
+  --shadow-md:      0 4px 24px rgba(0,0,0,0.6);
+  --shadow-lg:      0 8px 48px rgba(0,0,0,0.7);
+  --shadow-violet:  0 0 40px rgba(124, 58, 255, 0.6);
+  --shadow-teal:    0 0 40px rgba(0, 229, 220, 0.5);
+  --shadow-gold:    0 0 40px rgba(255, 181, 71, 0.5);
+  --shadow-red:     0 0 40px rgba(255, 61, 90, 0.5);
+  --shadow-btn:     0 4px 24px rgba(124, 58, 255, 0.7);
+  --shadow-slot:    0 0 80px rgba(124,58,255,0.4), inset 0 0 40px rgba(0,0,0,0.6);
+
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --duration-fast:   150ms;
+  --duration-base:   300ms;
+  --duration-slow:   600ms;
+  --duration-slower: 1000ms;
+
+  --z-base:    0;
+  --z-raised:  10;
+  --z-overlay: 100;
+  --z-modal:   200;
+  --z-toast:   300;
+}
