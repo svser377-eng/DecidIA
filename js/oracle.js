@@ -1,9 +1,10 @@
 /* ============================================================
-   DecidIA — Oracle & Particles (Casino Edition)
+   DecidIA — Oracle & Particles (Casino Edition v2)
    ============================================================ */
 'use strict';
 
-const DecidIA = window.DecidIA || {};
+window.DecidIA = window.DecidIA || {};
+var DecidIA = window.DecidIA;
 
 // ── Partículas ──────────────────────────────────────────────
 DecidIA.Particles = {
@@ -25,166 +26,189 @@ DecidIA.Particles = {
   },
 
   spawn(count) {
-    const colors = ['124,58,255', '0,229,220', '255,61,90', '255,181,71'];
+    const colors = ['124,58,255','0,229,220','255,61,90','255,181,71'];
     for (let i = 0; i < count; i++) {
       this.particles.push({
-        x:     Math.random() * this.canvas.width,
-        y:     Math.random() * this.canvas.height,
-        r:     Math.random() * 1.8 + 0.3,
+        x: Math.random() * (this.canvas ? this.canvas.width : 800),
+        y: Math.random() * (this.canvas ? this.canvas.height : 600),
+        r: Math.random() * 1.8 + 0.3,
         alpha: Math.random() * 0.5 + 0.05,
-        vx:    (Math.random() - 0.5) * 0.4,
-        vy:   -(Math.random() * 0.5 + 0.1),
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: -(Math.random() * 0.5 + 0.1),
         color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
   },
 
   loop() {
+    if (!this.canvas) return;
     this.animFrame = requestAnimationFrame(() => this.loop());
     const { ctx, canvas, particles } = this;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const colors = ['124,58,255', '0,229,220', '255,61,90', '255,181,71'];
-    particles.forEach((p, i) => {
+    const colors = ['124,58,255','0,229,220','255,61,90','255,181,71'];
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
       p.x += p.vx; p.y += p.vy; p.alpha -= 0.0002;
       if (p.y < -10 || p.alpha <= 0) {
         particles[i] = {
-          x:     Math.random() * canvas.width,
-          y:     canvas.height + 10,
-          r:     Math.random() * 1.8 + 0.3,
+          x: Math.random() * canvas.width,
+          y: canvas.height + 10,
+          r: Math.random() * 1.8 + 0.3,
           alpha: Math.random() * 0.5 + 0.05,
-          vx:    (Math.random() - 0.5) * 0.4,
-          vy:   -(Math.random() * 0.5 + 0.1),
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: -(Math.random() * 0.5 + 0.1),
           color: colors[Math.floor(Math.random() * colors.length)],
         };
-        return;
+        continue;
       }
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
+      ctx.fillStyle = 'rgba(' + p.color + ',' + p.alpha + ')';
       ctx.fill();
-    });
+    }
   },
 
-  burst(x, y, count = 30) {
-    const colors = ['124,58,255', '0,229,220', '255,181,71', '255,61,90'];
+  burst(x, y, count) {
+    count = count || 30;
+    const colors = ['124,58,255','0,229,220','255,181,71','255,61,90'];
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count;
       const speed = Math.random() * 3 + 1;
       this.particles.push({
-        x, y,
-        r:     Math.random() * 3 + 1,
+        x: x, y: y,
+        r: Math.random() * 3 + 1,
         alpha: 0.9,
-        vx:    Math.cos(angle) * speed,
-        vy:    Math.sin(angle) * speed - 1.5,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 1.5,
         color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
   },
 };
 
-// ── Slot Machine Oracle ─────────────────────────────────────
+// ── Oracle Slot Machine ─────────────────────────────────────
 DecidIA.Oracle = {
   isSpinning: false,
   currentResult: null,
 
-  get spinItems() {
-    return DecidIA.ALL_RESPONSES.map(r => r.text);
-  },
-
   /**
-   * Casino-style drum spin on the column element.
-   * column: the .slot-drum__column element
-   * windowEl: the .slot-drum__window for measuring
-   * highlightEl: .slot-drum__highlight
-   * onComplete: callback(result)
+   * Animates the drum column with a slot-machine effect.
+   * @param {HTMLElement} columnEl   - .slot-drum__column
+   * @param {HTMLElement} windowEl   - .slot-drum__window  (for particle burst coords)
+   * @param {HTMLElement} highlightEl- .slot-drum__highlight
+   * @param {Function}    onComplete - callback(result)
    */
-  spin(columnEl, windowEl, highlightEl, onComplete) {
+  spin: function(columnEl, windowEl, highlightEl, onComplete) {
     if (this.isSpinning) return;
+    if (!columnEl) { console.error('DecidIA.Oracle.spin: columnEl not found'); return; }
+
     this.isSpinning = true;
 
-    const result = DecidIA.getRandomResponse();
-    this.currentResult = result;
+    var self = this;
+    var result = DecidIA.getRandomResponse();
+    self.currentResult = result;
 
-    // Build item list for animation: many random + result at end
-    const items = this.spinItems;
-    const phases = [
-      { count: 10, delay: 60 },
-      { count: 12, delay: 90 },
-      { count: 10, delay: 130 },
-      { count: 6,  delay: 190 },
-      { count: 4,  delay: 280 },
-    ];
+    // Build the full sequence of texts to flash through
+    var pool = DecidIA.ALL_RESPONSES.map(function(r){ return r.text; });
 
-    highlightEl.classList.remove('is-active');
-    columnEl.innerHTML = '';
+    // Schedule: [delay_ms, text] pairs
+    var schedule = [];
 
-    const ITEM_H = 56;
-    const visibleCount = 5;
-    const centerIdx = Math.floor(visibleCount / 2);
+    // Fast phase
+    for (var i = 0; i < 12; i++) {
+      schedule.push([65, pool[Math.floor(Math.random() * pool.length)]]);
+    }
+    // Medium phase
+    for (var i = 0; i < 10; i++) {
+      schedule.push([110, pool[Math.floor(Math.random() * pool.length)]]);
+    }
+    // Slow phase
+    for (var i = 0; i < 7; i++) {
+      schedule.push([180, pool[Math.floor(Math.random() * pool.length)]]);
+    }
+    // Very slow
+    for (var i = 0; i < 4; i++) {
+      schedule.push([280, pool[Math.floor(Math.random() * pool.length)]]);
+    }
+    // Final two near-results
+    schedule.push([350, pool[Math.floor(Math.random() * pool.length)]]);
+    schedule.push([380, pool[Math.floor(Math.random() * pool.length)]]);
+    // RESULT
+    schedule.push([0, result.text, true]);
 
-    let allItems = [];
-    phases.forEach(ph => {
-      for (let i = 0; i < ph.count; i++) {
-        allItems.push({ text: items[Math.floor(Math.random() * items.length)], delay: ph.delay });
-      }
-    });
-    // Last 3 are lead-up, then result
-    allItems.push({ text: items[Math.floor(Math.random() * items.length)], delay: 350 });
-    allItems.push({ text: items[Math.floor(Math.random() * items.length)], delay: 350 });
-    allItems.push({ text: result.text, delay: 400, isResult: true });
+    if (highlightEl) highlightEl.classList.remove('is-active');
 
-    let idx = 0;
-    const colorMap = {
-      success: '#22D47B', teal: '#00E5DC', violet: '#7C3AFF',
-      warning: '#FFB547', danger: '#FF5C7A', muted: '#9898C8',
+    var colorMap = {
+      success: '#22D47B',
+      teal:    '#00E5DC',
+      violet:  '#7C3AFF',
+      warning: '#FFB547',
+      danger:  '#FF5C7A',
+      muted:   '#9898C8',
     };
 
-    const showNext = () => {
-      if (idx >= allItems.length) {
-        // Show final result display
-        this.isSpinning = false;
-        highlightEl.classList.add('is-active');
-        const hex = colorMap[result.color] || '#F0F0FF';
-        columnEl.innerHTML = `
-          <div class="slot-drum__item--result">
-            <span class="slot-drum__result-emoji">${result.emoji}</span>
-            <span class="slot-drum__result-text" style="color:${hex}">${result.text}</span>
-          </div>
-        `;
-        // Burst particles
-        const rect = windowEl.getBoundingClientRect();
-        DecidIA.Particles.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 40);
-        onComplete && onComplete(result);
+    var idx = 0;
+
+    function step() {
+      if (idx >= schedule.length) return;
+
+      var item = schedule[idx];
+      var delay  = item[0];
+      var text   = item[1];
+      var isFinal = item[2] === true;
+      idx++;
+
+      if (isFinal) {
+        // Show final result
+        self.isSpinning = false;
+        if (highlightEl) highlightEl.classList.add('is-active');
+
+        var hex = colorMap[result.color] || '#F0F0FF';
+        columnEl.innerHTML =
+          '<div class="slot-drum__item--result">' +
+            '<span class="slot-drum__result-emoji">' + result.emoji + '</span>' +
+            '<span class="slot-drum__result-text" style="color:' + hex + '">' + result.text + '</span>' +
+          '</div>';
+
+        // Particle burst
+        if (windowEl) {
+          var rect = windowEl.getBoundingClientRect();
+          DecidIA.Particles.burst(
+            rect.left + rect.width / 2,
+            rect.top  + rect.height / 2,
+            40
+          );
+        }
+
+        if (typeof onComplete === 'function') onComplete(result);
         return;
       }
 
-      const item = allItems[idx];
-      // Build a mini-drum strip centered on current item
-      let html = '';
-      for (let r = -centerIdx; r <= centerIdx; r++) {
-        const pos = idx + r;
-        let text = '';
-        if (pos >= 0 && pos < allItems.length) text = allItems[pos].text;
-        else text = items[Math.floor(Math.random() * items.length)];
-        const isCtr = r === 0;
-        html += `<div class="slot-drum__item${isCtr ? ' is-center' : ''}">${text}</div>`;
-      }
-      columnEl.innerHTML = html;
+      // Show spinning item — with neighbours for depth
+      var prev = pool[Math.floor(Math.random() * pool.length)];
+      var next = pool[Math.floor(Math.random() * pool.length)];
+      columnEl.innerHTML =
+        '<div class="slot-drum__item">' + prev + '</div>' +
+        '<div class="slot-drum__item is-center">' + text + '</div>' +
+        '<div class="slot-drum__item">' + next + '</div>';
 
-      idx++;
-      setTimeout(showNext, item.delay);
-    };
+      setTimeout(step, delay);
+    }
 
-    showNext();
+    step();
   },
 };
 
-// ── Example rotator ─────────────────────────────────────────
+// ── Example placeholder rotator ─────────────────────────────
 DecidIA.ExampleRotator = {
-  init(inputEl, examples, interval = 3500) {
-    if (!inputEl || !examples.length) return;
-    let index = 0;
-    const rotate = () => { inputEl.setAttribute('placeholder', examples[index]); index = (index + 1) % examples.length; };
+  init: function(inputEl, examples, interval) {
+    interval = interval || 3500;
+    if (!inputEl || !examples || !examples.length) return;
+    var index = 0;
+    var rotate = function() {
+      inputEl.setAttribute('placeholder', examples[index]);
+      index = (index + 1) % examples.length;
+    };
     rotate();
     setInterval(rotate, interval);
   },

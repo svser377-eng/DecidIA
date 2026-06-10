@@ -4,7 +4,8 @@
 
 'use strict';
 
-const DecidIA = window.DecidIA || {};
+window.DecidIA = window.DecidIA || {};
+var DecidIA = window.DecidIA;
 
 // ── Respuestas del Oráculo ──────────────────────────────────
 DecidIA.RESPONSES = {
