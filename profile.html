@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DecidIA — Mi Perfil</title>
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/profile.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🔮</text></svg>" />
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+
+<nav class="navbar">
+  <div class="container navbar__inner">
+    <a href="../index.html" class="navbar__logo">
+      <span>Decid</span><span class="logo-accent">IA</span>
+    </a>
+    <ul class="navbar__nav">
+      <li><a href="dashboard.html" class="navbar__link">Mi panel</a></li>
+      <li><a href="history.html" class="navbar__link">Historial</a></li>
+      <li><a href="profile.html" class="navbar__link">Mi perfil</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="profile-layout">
+  <div class="container container--sm">
+
+    <!-- QUIZ (before completion) -->
+    <div id="quiz-section">
+      <div class="profile-header text-center">
+        <span class="badge badge--violet">✨ Perfilamiento</span>
+        <h1 class="profile-title">Descúbrete como<br/><span class="text-gradient">tomador de decisiones</span></h1>
+        <p class="text-muted">7 preguntas · 2 minutos · Desbloquea el análisis con IA</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="quiz-progress">
+        <div class="quiz-progress__bar">
+          <div class="progress-bar">
+            <div class="progress-bar__fill" id="quiz-progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+        <span class="quiz-progress__label text-muted" id="quiz-step-label">Pregunta 1 de 7</span>
+      </div>
+
+      <!-- Question card -->
+      <div class="quiz-card card" id="quiz-card">
+        <div class="quiz-card__emoji" id="q-emoji">🌤️</div>
+        <h2 class="quiz-card__question" id="q-text">Cargando...</h2>
+        <div class="quiz-card__options" id="q-options"></div>
+        <div class="quiz-card__actions">
+          <button class="btn btn--ghost" id="btn-prev" disabled>← Anterior</button>
+          <button class="btn btn--primary" id="btn-next">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS (after completion) -->
+    <div id="results-section" style="display:none;">
+      <div class="profile-results">
+        <div class="profile-results__header text-center">
+          <div class="profile-results__trophy">🏆</div>
+          <h2>Tu perfil está listo</h2>
+          <p class="text-muted">Basado en tus respuestas, aquí está tu tipo de decisor:</p>
+        </div>
+
+        <!-- Profile type -->
+        <div class="profile-type-card card card--glow" id="profile-type-card">
+          <div class="profile-type-card__icon" id="profile-icon">♟️</div>
+          <div class="profile-type-card__info">
+            <h3 id="profile-name">Estratega</h3>
+            <p id="profile-description" class="text-muted"></p>
+            <div class="profile-type-card__traits" id="profile-traits"></div>
+          </div>
+        </div>
+
+        <!-- Emotional dimensions -->
+        <div class="card profile-dimensions-card">
+          <h3>Dimensiones emocionales</h3>
+          <div class="dimension-list" id="dimension-list"></div>
+        </div>
+
+        <!-- CTA -->
+        <div class="profile-results__cta text-center">
+          <p class="text-muted">Tu perfil ya está activo. La IA lo usará en cada análisis.</p>
+          <div style="display:flex; gap: var(--space-3); justify-content:center; flex-wrap:wrap;">
+            <a href="dashboard.html" class="btn btn--primary btn--lg">Ver mi panel →</a>
+            <a href="../index.html" class="btn btn--ghost btn--lg">Hacer una consulta</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="../js/models.js"></script>
+<script src="../js/oracle.js"></script>
+<script src="../js/profile.js"></script>
+</body>
+</html>
